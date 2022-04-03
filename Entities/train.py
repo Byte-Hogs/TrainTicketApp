@@ -1,0 +1,61 @@
+from Entities.route import Route, quanta
+from Entities.station import Station
+
+class SeatingClassCosts (object):
+    def __init__(self, firstAC:float = 0.0, secondAC:float = 0.0, thirdAC:float = 0.0, sleeper:float = 0.0, reserved:float = 0.0) -> None:
+        self.__dist = {
+            "first AC" : firstAC,
+            "second AC" : secondAC,
+            "third AC" : thirdAC,
+            "sleeper" : sleeper,
+            "reserved" : reserved
+        }
+    
+    def get(self, classType:str) -> float:
+        return self.__dist.get(classType)
+    
+    def set(self, classType:str, value:float) -> None:
+        return self.__dist.update({ classType : value })
+
+class StatusReport (object):
+    def __init__(self, id:int, name:str, time:quanta) -> None:
+        self.__id = id
+        self.__name = name
+        self.__time = time
+    
+    def id(self) -> int:
+        return self.__id
+    
+    def name(self) -> str:
+        return self.__name
+    
+    def estimatedArrival(self) -> quanta:
+        return self.__time
+
+class Train:
+    def __init__(self, id:int, name:str = "", costChart:SeatingClassCosts = SeatingClassCosts(), route:Route = Route()) -> None:
+        self.__id = id
+        self.__name = name
+        self.__costDist = costChart
+        self.__route = route
+    
+    def __eq__(self, __o: object) -> bool:
+        return self.id() == __o.id()
+
+    def __ne__(self, __o: object) -> bool:
+        return self.id() != __o.id()
+
+    def id(self) -> int:
+        return self.__id
+    
+    def name(self) -> str:
+        return self.__name
+    
+    def cost(self, classType:str) -> float:
+        return self.__costDist.get(classType)
+    
+    def queryStatus(self, station:Station, currentTime:quanta) -> StatusReport:
+        return StatusReport(self.id(), self.name(), self.__route.timeToStation(station))
+    
+    def setRoute(self, route:Route) -> None:
+        self.__route = route
