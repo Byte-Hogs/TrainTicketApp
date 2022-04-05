@@ -1,5 +1,5 @@
 class Station (object):
-    def __init__(self, id:int, name:str = "", neighbours:list = []) -> None:
+    def __init__(self, id:int = 0, name:str = "", neighbours:list = []) -> None:
         self.__id = id
         self.__name = name
         self.__neighbours = neighbours
@@ -10,11 +10,14 @@ class Station (object):
     def __ne__(self, __o: object) -> bool:
         return self.id() != __o.id()
 
+    def __str__(self):
+        return self.__name
+
     def id(self) -> int:
         return self.__id
     
     def name(self) -> str:
-        return self.__str
+        return self.__name
     
     def neighbours(self) -> list:
         return self.__neighbours

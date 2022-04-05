@@ -1,9 +1,65 @@
 from collections import deque
-from Entities.station import Station
+from station import Station
 
 class quanta (int):
-    def __init__(self, value:int) -> None:
-        super().__init__(value)
+    def __init__(self, value:int, unit:str) -> None:
+        super().__init__()
+        
+        if unit in ('s', 'seconds'):
+            self.__d = 86400
+            self.__h = 3600
+            self.__m = 60
+            self.__s = 1
+        
+        elif unit in ('m', 'minutes'):
+            self.__d = 1440
+            self.__h = 60
+            self.__m = 1
+            self.__s = 1 / 60
+    
+        elif unit in ('h', 'hours'):
+            self.__d = 24
+            self.__h = 1
+            self.__m = 1 / 60
+            self.__s = 1 / 3600
+        elif unit in ('h', 'hours'):
+            self.__d = 1
+            self.__h = 60 / 24
+            self.__m = 1 / 1440
+            self.__s = 1 / 86400
+    
+    def days(self) -> float:
+        return self / self.__d
+    
+    def hours(self) -> float:
+        return self / self.__h
+    
+    def minutes(self) -> float:
+        return self / self.__m
+  
+    def seconds(self) -> float:
+        return self / self.__s
+    
+    def clock(self) -> list:
+        x = self
+        
+        clock = [ int(x // self.__d) ]
+        x -= clock[0] * self.__d
+        
+        clock.append( int(x // self.__h) )
+        x -= clock[1] * self.__h
+        
+        clock.append( int(x // self.__m) )
+        x -= clock[2] * self.__m
+        
+        clock.append( int(x // self.__s) )
+        x -= clock[3] * self.__s
+
+        return clock
+
+    def __str__(self):
+        chronos = self.clock()
+        return str(chronos[0]) + " days " + str(chronos[1]) + " hours " + str(chronos[2]) + " minutes " + str(chronos[3]) + " seconds"
 
 class RoutePoint (object):
     def __init__(self, station:Station, timeDelta:quanta) -> None:
@@ -15,9 +71,15 @@ class Route (object):
         self.__routePoints = deque([ RoutePoint(startingStation, departureTime) ])
         self.__size = 1
     
+    def __str__(self) -> str:
+        return str(self.__routePoints[0].station) + " to " + str(self.__routePoints[-1].station)
+
     def departure(self) -> RoutePoint:
         return self.__routePoints[0]
     
+    def finalStation(self) -> Station:
+        return self.__routePoints[-1].station
+
     def size(self) -> int:
         return self.__size
 
