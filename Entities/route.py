@@ -2,31 +2,41 @@ from collections import deque
 from station import Station
 
 class quanta (int):
+    '''
+    a modified int that provides functionalities for time-unit conversions
+    '''
+    
     def __init__(self, value:int, unit:str) -> None:
+        '''
+        CONSTRUCTOR
+            abstracts value from unit provided the following exceptions aren't thrown
+                
+                ValueError for unit type outside provided options
+        
+        PARAMETERS: value : int, unit : str
+            unit <= { 's' or 'seconds', 'm' or 'minutes', 'h' or 'hours', 'd' or 'days' }
+        '''
         super().__init__()
+
+        self.__d = 86400
+        self.__h = 3600
+        self.__m = 60
+        self.__s = 1
         
         if unit in ('s', 'seconds'):
-            self.__d = 86400
-            self.__h = 3600
-            self.__m = 60
-            self.__s = 1
+            self *= self.__s
         
         elif unit in ('m', 'minutes'):
-            self.__d = 1440
-            self.__h = 60
-            self.__m = 1
-            self.__s = 1 / 60
+            self *= self.__m
     
         elif unit in ('h', 'hours'):
-            self.__d = 24
-            self.__h = 1
-            self.__m = 1 / 60
-            self.__s = 1 / 3600
+            self *= self.__h
+
         elif unit in ('h', 'hours'):
-            self.__d = 1
-            self.__h = 60 / 24
-            self.__m = 1 / 1440
-            self.__s = 1 / 86400
+            self *= self.__d
+
+        else:
+            raise ValueError('unit not supported by current version of quanta')
     
     def days(self) -> float:
         return self / self.__d
@@ -41,6 +51,10 @@ class quanta (int):
         return self / self.__s
     
     def clock(self) -> list:
+        '''
+        METHOD clock
+            generates a list of the format [ days, hours, minutes, seconds ]
+        '''
         x = self
         
         clock = [ int(x // self.__d) ]
