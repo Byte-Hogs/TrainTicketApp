@@ -1,5 +1,6 @@
 from route import Route, quanta
 from station import Station
+from weekdist import WeekDist
 
 class SeatingClassCapacity (object):
     def __init__(self, firstAC:int = 0, secondAC:int = 0, thirdAC:int = 0, sleeper:int = 0, reserved:int = 0) -> None:
@@ -66,11 +67,11 @@ class CoachStats (object):
         return self.__capacity.update({ type, value })
 
 class Train:
-    def __init__(self, id:int, name:str = "", coach:CoachStats = CoachStats(), route:Route = Route()) -> None:
+    def __init__(self, id:int, name:str = "", coach:CoachStats = CoachStats(), routePerWeek:WeekDist = WeekDist()) -> None:
         self.__id = id
         self.__name = name
         self.__coach = coach
-        self.__route = route
+        self.__weekRoute = routePerWeek
     
     def __eq__(self, __o: object) -> bool:
         return self.id() == __o.id()
@@ -93,8 +94,8 @@ class Train:
     def updateCoach(self, coach:CoachStats) -> None:
         self.__coach = coach
 
-    def queryStatus(self, station:Station, currentTime:quanta) -> StatusReport:
-        return StatusReport(self.id(), self.name(), self.__route.timeToStation(station))
+    def queryStatus(self, station:Station, currentTime:quanta, day:str) -> StatusReport:
+        return StatusReport(self.id(), self.name(), self.__weekRoute.get(day).timeToStation(station))
     
-    def updateRoute(self, route:Route) -> None:
-        self.__route = route
+    def updateRoute(self, route:Route, day:str) -> None:
+        self.__weekRoute.set(day, route)
