@@ -2,6 +2,11 @@ from collections import deque
 from station import Station
 
 class quanta (int):
+    class UnsupportedUnit (ValueError):
+        def __init__(self, message:str, errors = []) -> None:
+            super().__init__(message)
+            self.errors = errors
+
     def __init__(self, value:int, unit:str) -> None:
         super().__init__()
         
@@ -26,7 +31,9 @@ class quanta (int):
             self.__d = 1
             self.__h = 60 / 24
             self.__m = 1 / 1440
-            self.__s = 1 / 86400
+            self.__s = 1 / 86400e
+        else:
+            raise quanta.UnsupportedUnit(unit + ' is not supported in current quanta structure')
     
     def days(self) -> float:
         return self / self.__d
