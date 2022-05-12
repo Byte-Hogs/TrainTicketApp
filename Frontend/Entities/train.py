@@ -21,9 +21,9 @@ class SeatingClassCapacity (object):
 class SeatingClassCost (object):
     def __init__(self, firstAC:float = 0.0, secondAC:float = 0.0, thirdAC:float = 0.0, sleeper:float = 0.0, reserved:float = 0.0) -> None:
         self.__dist = {
-            "first AC" : firstAC,
-            "second AC" : secondAC,
-            "third AC" : thirdAC,
+            "first" : firstAC,
+            "second" : secondAC,
+            "third" : thirdAC,
             "sleeper" : sleeper,
             "reserved" : reserved
         }
