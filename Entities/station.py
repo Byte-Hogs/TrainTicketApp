@@ -12,19 +12,22 @@ class Station (object):
 
     idList = set()
 
-    def __init__(self, id:int = 0, name:str = "", neighbours:list = []) -> None:
+    def __init__(self, id:int = 0, name:str = "", neighbours = []) -> None:
         self.__id = id
-        
-        if self.__id in Station.idList:
-            raise Station.IDRepeatException("Station #%d already exists" %self.__id)
+
+        if id in Station.idList:
+            raise Station.IDRepeatException("Station #%d already exists" %self.__id)        
         
         Station.idList.add(self.__id)
         
         self.__name = name
-        self.__neighbours = neighbours
+        self.__neighbours = list(*neighbours)
     
     def __del__(self) -> None:
-        Station.idList.remove(self.__id)
+        try:
+            Station.idList.remove(self.__id)
+        except:
+            pass
     
     def __eq__(self, __o: object) -> bool:
         return self.id() == __o.id()
@@ -48,16 +51,15 @@ class Station (object):
         return neighbour in self.__neighbours
 
     def addNeighbour(self, neighbour) -> None:
+
         if neighbour == self:
-            raise Station.NeighbourException("Station #%d attemepting to neighbour itself" %self.__id)
-
-        try:
-            assert(not self.isNeighbour(neighbour))
-            self.__neighbours.append(neighbour)
+            raise Station.NeighbourException("Station #%d attempting to neighbour itself" %self.__id)
         
-        except AssertionError:
+        elif self.isNeighbour(neighbour):
             raise Station.NeighbourException("Station #%d is already a neighbour to station #%d" %(neighbour.id(), self.__id))
-
+        else:
+            self.__neighbours.append(neighbour)
+    
     def removeNeighbour(self, neighbour) -> None:
         try:
             self.__neighbours.remove(neighbour)
@@ -67,3 +69,10 @@ class Station (object):
 def LinkStations(A:Station, B:Station) -> None:
     A.addNeighbour(B)
     B.addNeighbour(A)
+
+def UnlinkStations(A:Station, B:Station) -> None:
+    try:
+        A.removeNeighbour(B)
+        B.removeNeighbour(A)
+    except Station.NeighbourException as e:
+        raise Station.NeighbourException (str(e), e.errors)
